@@ -36,12 +36,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/login", "/user/signup", "/user/**").permitAll() // 회원가입, 로그인 관련은 허용
-                        .requestMatchers("/upload/**").permitAll() // 업로드 파일 접근도 허용
                         .requestMatchers("/admin/**").authenticated() // 관리자만 인증 필요
                         .anyRequest().permitAll()
                 )
-                .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 안 씀
-                .httpBasic(AbstractHttpConfigurer::disable) // httpBasic 안 씀
+                .formLogin(AbstractHttpConfigurer::disable) 
+                .httpBasic(AbstractHttpConfigurer::disable) 
                 .build();
     }
 
@@ -62,15 +61,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://softwarepos.netlify.app", "http://localhost:63342")
+                .allowedOrigins("http://localhost:63342")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/upload/**")
-                .addResourceLocations("file:/home/ubuntu/upload/");
-    }
+    
 
 }
