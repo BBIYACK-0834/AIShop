@@ -14,7 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -30,17 +29,16 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> {}) // CORS 활성화
-                .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화 (API 서버니까)
+                .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화 (API 서버용)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 로그인 필요시만 세션 생성
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 등 무상태 세션 정책 권장
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/login", "/user/signup", "/user/**").permitAll() // 회원가입, 로그인 관련은 허용
-                        .requestMatchers("/admin/**").authenticated() // 관리자만 인증 필요
-                        .anyRequest().permitAll()
+                        .requestMatchers("/", "/user/signup", "/user/login").permitAll() // 회원가입/로그인 허용
+                        .anyRequest().authenticated() // 나머지는 인증 필요
                 )
-                .formLogin(AbstractHttpConfigurer::disable) 
-                .httpBasic(AbstractHttpConfigurer::disable) 
+                .formLogin(AbstractHttpConfigurer::disable) // 기본 로그인 폼 비활성화
+                .httpBasic(AbstractHttpConfigurer::disable) // 기본 인증 비활성화
                 .build();
     }
 
@@ -57,15 +55,16 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ CORS 설정
+    // ✅ Codespaces 환경 CORS 허용
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:63342")
+                .allowedOrigins(
+                        "https://*.github.dev",
+                        "https://scaling-rotary-phone-gppj7946w4jc9wj-8080.app.github.dev"
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
-    
-
 }
