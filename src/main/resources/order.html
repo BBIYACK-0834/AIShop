@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>POS Order Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            grid-template-rows: auto 1fr auto;
+            gap: 10px;
+            width: 90%;
+            height: 90%;
+        }
+
+        .order-summary {
+            grid-column: 1 / 2;
+            grid-row: 1 / 4;
+            border: 2px solid #000;
+            padding: 10px;
+            background-color: #ffffff;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-summary h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .quantity-controls button {
+            padding: 2px 6px;
+            margin: 0 2px;
+            font-size: 12px;
+        }
+
+        .total-price {
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .menu-section {
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            padding: 5px;
+        }
+
+        .menu-section button {
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            background-color: #eee;
+            border: 1px solid #000;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .function-buttons {
+            grid-column: 2 / 3;
+            grid-row: 3 / 4;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .function-buttons button {
+            padding: 20px;
+            background-color: #ddd;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="order-summary">
+        <h2>주문 내역</h2>
+        <div id="order-items"></div>
+        <div class="total-price" id="total-price">총액: 0원</div>
+    </div>
+
+    <div class="menu-section" id="menu-section"></div>
+
+    <div class="function-buttons">
+        <button id="clear-button">정리</button>
+        <button id="order-button">주문</button>
+        <button id="cancel-button">취소</button>
+    </div>
+</div>
+
+<script src="order.js"></script>
+</body>
+</html>
