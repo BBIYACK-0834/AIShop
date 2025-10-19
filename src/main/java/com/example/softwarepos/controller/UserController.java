@@ -18,7 +18,11 @@ public class UserController {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
+    
+    @GetMapping("/signup")
+    public String signupPage() {
+    return "회원가입 페이지";
+    }
     @PostMapping("/signup")
     public String signup(@RequestBody UserEntity user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
