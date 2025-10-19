@@ -43,6 +43,14 @@
         .login-container button:hover {
             background: #0056b3;
         }
+        /* 회원가입 버튼 스타일 */
+        #signupBtn {
+            background: #28a745;
+            margin-top: 10px;
+        }
+        #signupBtn:hover {
+            background: #218838;
+        }
         .message {
             margin-top: 15px;
             text-align: center;
@@ -57,11 +65,13 @@
     <input type="text" id="username" placeholder="아이디">
     <input type="password" id="password" placeholder="비밀번호">
     <button id="loginBtn">로그인</button>
+    <button id="signupBtn">회원가입</button>
     <div class="message" id="message"></div>
 </div>
 
 <script>
     const loginBtn = document.getElementById('loginBtn');
+    const signupBtn = document.getElementById('signupBtn');
     const messageDiv = document.getElementById('message');
 
     loginBtn.addEventListener('click', () => {
@@ -83,7 +93,7 @@
         })
         .then(res => {
             if (!res.ok) throw new Error('로그인 실패');
-            return res.json();
+            return res.json(); // 서버가 JSON 반환 시
         })
         .then(data => {
             console.log('로그인 성공:', data);
@@ -95,6 +105,11 @@
             messageDiv.style.color = 'red';
             messageDiv.textContent = '로그인 실패. 아이디/비밀번호 확인';
         });
+    });
+
+    // 회원가입 버튼 클릭 시 signup.html로 이동
+    signupBtn.addEventListener('click', () => {
+        window.location.href = 'signup.html';
     });
 </script>
 

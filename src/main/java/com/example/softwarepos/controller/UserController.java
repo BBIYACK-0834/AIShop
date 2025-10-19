@@ -50,7 +50,7 @@ public Map<String, Object> login(@RequestBody UserEntity loginRequest) {
         result.put("success", false);
         result.put("message", e.getMessage());
     }
-    return result; // Spring이 자동으로 JSON 변환
+    return result; 
 }
 
 }
