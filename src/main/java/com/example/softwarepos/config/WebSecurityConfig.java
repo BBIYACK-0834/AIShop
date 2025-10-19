@@ -34,7 +34,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 등 무상태 세션 정책 권장
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/user/signup", "/user/login", "/h2-console/**").permitAll() // 회원가입/로그인/H2 허용
+                        .requestMatchers("/**").permitAll() // 회원가입/로그인/H2 허용
                         .anyRequest().authenticated() // 나머지는 인증 필요
                 )
                 // ✅ H2 콘솔용 프레임 허용

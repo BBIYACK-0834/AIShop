@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/user")
@@ -31,20 +33,24 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserEntity loginRequest) {
-        try {
-            // AuthenticationManager로 인증 시도
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
-                            loginRequest.getPassword()
-                    )
-            );
-            // 인증 성공
-            return "로그인 성공: " + authentication.getName();
-        } catch (AuthenticationException e) {
-            // 인증 실패
-            return "로그인 실패: " + e.getMessage();
-        }
+public Map<String, Object> login(@RequestBody UserEntity loginRequest) {
+    Map<String, Object> result = new HashMap<>();
+    try {
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                loginRequest.getUsername(),
+                loginRequest.getPassword()
+            )
+        );
+        // 인증 성공
+        result.put("success", true);
+        result.put("username", authentication.getName());
+    } catch (AuthenticationException e) {
+        // 인증 실패
+        result.put("success", false);
+        result.put("message", e.getMessage());
     }
+    return result; // Spring이 자동으로 JSON 변환
+}
+
 }
