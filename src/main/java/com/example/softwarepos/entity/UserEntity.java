@@ -14,12 +14,20 @@ public class UserEntity {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    private String userid;
+
+    @Column(nullable = false)
+    private String userpw;
+
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
-    private String password;
+    private String useraddress;
 
-    private String email;
+    @Column(nullable = false)
+    private String userphone;
+
 
     private String role = "USER";
 }

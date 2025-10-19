@@ -27,19 +27,19 @@ public class UserController {
     }
     @PostMapping("/signup")
     public String signup(@RequestBody UserEntity user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setUserpw(passwordEncoder.encode(user.getUserpw()));
         userRepository.save(user);
         return "회원가입 완료";
     }
 
     @PostMapping("/login")
-public Map<String, Object> login(@RequestBody UserEntity loginRequest) {
+    public Map<String, Object> login(@RequestBody UserEntity loginRequest) {
     Map<String, Object> result = new HashMap<>();
     try {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsername(),
-                loginRequest.getPassword()
+                loginRequest.getUserpw()
             )
         );
         // 인증 성공

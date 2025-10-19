@@ -22,7 +22,7 @@ public class UserDetailService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         UserBuilder builder = User.withUsername(user.getUsername())
-                .password(user.getPassword())
+                .password(user.getUserpw())
                 .roles(user.getRole());
         return builder.build();
     }
