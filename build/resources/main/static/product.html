@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>상품 목록</title>
     <style>
         body {
@@ -24,6 +24,12 @@
         th, td {
             padding: 10px;
             text-align: center;
+            vertical-align: middle;
+        }
+        img.product-img {
+            max-width: 100px;
+            max-height: 80px;
+            object-fit: contain;
         }
         button {
             padding: 5px 10px;
@@ -60,6 +66,7 @@
             <th>가격</th>
             <th>세부</th>
             <th>설명</th>
+            <th>이미지</th> <!-- 이미지 컬럼 추가 -->
             <th>액션</th>
         </tr>
     </thead>
@@ -70,17 +77,25 @@
 <!-- 상품 추가/수정 폼 -->
 <div id="productForm" style="display:none; margin-top:20px;">
     <h3 id="formTitle">상품 추가</h3>
-    <input type="hidden" id="productId">
-    <input type="text" id="proname" placeholder="상품명"><br><br>
-    <input type="number" id="proprice" placeholder="가격"><br><br>
-    <input type="text" id="prosub" placeholder="세부"><br><br>
-    <input type="text" id="prointro" placeholder="설명"><br><br>
+    <input type="hidden" id="productId" />
+    <input type="text" id="proname" placeholder="상품명" /><br /><br />
+    <input type="number" id="proprice" placeholder="가격" /><br /><br />
+    <input type="text" id="prosub" placeholder="세부" /><br /><br />
+    <input type="text" id="prointro" placeholder="설명" /><br /><br />
+
+    <!-- 이미지 첨부 추가 -->
+    <label for="productImagePath">상품 이미지:</label>
+    <input type="file" id="productImagePath" name="uploadFile" accept="image/*" /><br /><br />
+
     <button onclick="submitProduct()" class="add-btn">저장</button>
     <button onclick="hideForm()">취소</button>
 </div>
 
 <script>
 const apiUrl = 'https://scaling-rotary-phone-gppj7946w4jc9wj-8080.app.github.dev/product';
+
+// 이미지가 저장된 서버 경로 기본값 (적절히 수정 필요)
+const imageBaseUrl = 'https://scaling-rotary-phone-gppj7946w4jc9wj-8080.app.github.dev/uploads/';
 
 // 상품 목록 불러오기
 function loadProducts() {
@@ -91,12 +106,21 @@ function loadProducts() {
             tbody.innerHTML = '';
             data.forEach(product => {
                 const tr = document.createElement('tr');
+
+                // 이미지가 있으면 img 태그, 없으면 "이미지 없음"
+                let imgHtml = '이미지 없음';
+                if (product.productImagePath) {
+                    const imgUrl = imageBaseUrl + encodeURIComponent(product.productImagePath);
+                    imgHtml = `<img class="product-img" src="${imgUrl}" alt="상품 이미지" />`;
+                }
+
                 tr.innerHTML = `
                     <td>${product.id}</td>
                     <td>${product.proname}</td>
                     <td>${product.proprice}</td>
                     <td>${product.prosub}</td>
                     <td>${product.prointro}</td>
+                    <td>${imgHtml}</td>
                     <td>
                         <button class="edit-btn" onclick="editProduct(${product.id})">수정</button>
                         <button class="delete-btn" onclick="deleteProduct(${product.id})">삭제</button>
@@ -108,6 +132,8 @@ function loadProducts() {
         .catch(err => console.error(err));
 }
 
+// 이하 기존 코드 동일...
+
 // 상품 추가 폼 보여주기
 function showAddForm() {
     document.getElementById('productForm').style.display = 'block';
@@ -117,6 +143,7 @@ function showAddForm() {
     document.getElementById('proprice').value = '';
     document.getElementById('prosub').value = '';
     document.getElementById('prointro').value = '';
+    document.getElementById('productImagePath').value = ''; // 이미지 input 초기화
 }
 
 function hideForm() {
@@ -129,8 +156,16 @@ function submitProduct() {
     const proprice = parseInt(document.getElementById('proprice').value);
     const prosub = document.getElementById('prosub').value;
     const prointro = document.getElementById('prointro').value;
+    const productImagePath = document.getElementById('productImagePath').files[0];
 
-    const payload = { proname, proprice, prosub, prointro };
+    const formData = new FormData();
+    formData.append('proname', proname);
+    formData.append('proprice', proprice);
+    formData.append('prosub', prosub);
+    formData.append('prointro', prointro);
+    if (productImagePath) {
+        formData.append('uploadFile', productImagePath);
+    }
 
     let url = apiUrl + '/add';
     let method = 'POST';
@@ -142,8 +177,8 @@ function submitProduct() {
 
     fetch(url, {
         method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: formData
+        // Content-Type 헤더를 안 넣어야 multipart/form-data가 자동 설정됨
     })
     .then(res => res.json())
     .then(data => {
@@ -167,6 +202,7 @@ function editProduct(id) {
             document.getElementById('proprice').value = product.proprice;
             document.getElementById('prosub').value = product.prosub;
             document.getElementById('prointro').value = product.prointro;
+            document.getElementById('productImagePath').value = ''; // 이미지 초기화
         });
 }
 

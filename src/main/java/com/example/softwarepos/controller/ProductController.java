@@ -1,22 +1,17 @@
 package com.example.softwarepos.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import com.example.softwarepos.entity.ProductEntity;
 import com.example.softwarepos.repository.ProductRepository;
-import com.example.softwarepos.entity.ProductEntity;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.*;
 
 @RestController
 @RequestMapping("/product")
@@ -31,23 +26,47 @@ public class ProductController {
 
 
     @PostMapping("/add")
-    public Map<String, Object> addProduct(@RequestBody ProductEntity productRequest) {
-        Map<String, Object> result = new HashMap<>();
+public Map<String, Object> addProduct(
+        @ModelAttribute ProductEntity productRequest,
+        @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile) {
 
-        try {
+    Map<String, Object> result = new HashMap<>();
+    String uploadDir = "/workspaces/AIShop/uploads";
+    File dir = new File(uploadDir);
+    if (!dir.exists()) {
+        dir.mkdirs();
+    }
 
-            ProductEntity savedProduct = productRepository.save(productRequest);
+    try {
+        // 이미지 파일 처리
+        if (uploadFile != null && !uploadFile.isEmpty()) {
+            String originalFilename = uploadFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            String savedFilename = uuid + "_" + originalFilename;
 
-            result.put("success", true);
-            result.put("message", "상품이 성공적으로 추가되었습니다.");
-            result.put("product", savedProduct);
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "상품 추가 중 오류가 발생했습니다.");
+            Path filePath = Paths.get(uploadDir, savedFilename);
+            Files.copy(uploadFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 이미지 경로를 상품 엔티티에 저장 (필드 추가 필요)
+            productRequest.setProductImagePath(savedFilename);
         }
 
-        return result;
+        // 상품 저장
+        ProductEntity savedProduct = productRepository.save(productRequest);
+
+        result.put("success", true);
+        result.put("message", "상품이 성공적으로 추가되었습니다.");
+        result.put("product", savedProduct);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        result.put("success", false);
+        result.put("message", "상품 추가 중 오류가 발생했습니다.");
     }
+
+    return result;
+}
+
     @PutMapping("/update/{id}")
     public Map<String, Object> updateProduct(@PathVariable Long id,
         @RequestBody ProductEntity productRequest) {
