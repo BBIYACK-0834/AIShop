@@ -2,24 +2,33 @@ package com.example.softwarepos.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import com.example.softwarepos.entity.ProductEntity;
-
+import com.example.softwarepos.repository.ProductRepository;
+import com.example.softwarepos.entity.ProductEntity;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
 public class ProductController {
-
-    @GetMapping("/list") //상품 확인
-    public String Product() {
-        return "물품 목록";
-    }
-
+    private final ProductRepository productRepository;
     
-     private final ProductRepository productRepository;
+    @GetMapping("/list") // 상품 확인
+    public List<ProductEntity> getProducts() {
+    return productRepository.findAll();
+}
+
 
     @PostMapping("/add")
     public Map<String, Object> addProduct(@RequestBody ProductEntity productRequest) {
