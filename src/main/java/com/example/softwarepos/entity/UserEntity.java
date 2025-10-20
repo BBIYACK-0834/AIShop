@@ -28,6 +28,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String userphone;
 
+    @Column(unique = true, nullable = false)
+    private String useremail;
+
 
     private String role = "USER";
 }
