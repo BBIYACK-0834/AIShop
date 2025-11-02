@@ -64,7 +64,7 @@ public class UserController {
         Map<String, Object> result = new HashMap<>();
         String email = request.get("email");
 
-        Optional<UserEntity> userOpt = userRepository.findByUseraddress(email);
+        Optional<UserEntity> userOpt = userRepository.findByUseremail(email);
         if (userOpt.isEmpty()) {
             result.put("success", false);
             result.put("message", "해당 이메일로 가입된 계정이 없습니다.");
@@ -87,7 +87,7 @@ public class UserController {
         String userid = request.get("userid");
         String email = request.get("email");
 
-        Optional<UserEntity> userOpt = userRepository.findByUseridAndUseraddress(userid, email);
+        Optional<UserEntity> userOpt = userRepository.findByUseridAndUseremail(userid, email);
         if (userOpt.isEmpty()) {
             result.put("success", false);
             result.put("message", "아이디와 이메일이 일치하지 않습니다.");
